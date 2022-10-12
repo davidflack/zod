@@ -12,7 +12,7 @@ const intNum = z.string().array().nonempty();
 const nonEmptyMax = z.string().array().nonempty().max(2);
 
 type t1 = z.infer<typeof nonEmptyMax>;
-const f1: util.AssertEqual<[string, ...string[]], t1> = true;
+const f1: util.AssertEqual<string[], t1> = true;
 f1;
 type t2 = z.infer<typeof minTwo>;
 const f2: util.AssertEqual<string[], t2> = true;

@@ -1239,23 +1239,12 @@ export interface ZodArrayDef<T extends ZodTypeAny = ZodTypeAny>
   maxLength: { value: number; message?: string } | null;
 }
 
-export type ArrayCardinality = "many" | "atleastone";
-type arrayOutputType<
-  T extends ZodTypeAny,
-  Cardinality extends ArrayCardinality = "many"
-> = Cardinality extends "atleastone"
-  ? [T["_output"], ...T["_output"][]]
-  : T["_output"][];
+type arrayOutputType<T extends ZodTypeAny> = T["_output"][];
 
-export class ZodArray<
-  T extends ZodTypeAny,
-  Cardinality extends ArrayCardinality = "many"
-> extends ZodType<
-  arrayOutputType<T, Cardinality>,
+export class ZodArray<T extends ZodTypeAny> extends ZodType<
+  arrayOutputType<T>,
   ZodArrayDef<T>,
-  Cardinality extends "atleastone"
-    ? [T["_input"], ...T["_input"][]]
-    : T["_input"][]
+  T["_input"][]
 > {
   _parse(input: ParseInput): ParseReturnType<this["_output"]> {
     const { ctx, status } = this._processInputParams(input);
@@ -1340,7 +1329,7 @@ export class ZodArray<
     return this.min(len, message).max(len, message) as any;
   }
 
-  nonempty(message?: errorUtil.ErrMessage): ZodArray<T, "atleastone"> {
+  nonempty(message?: errorUtil.ErrMessage): ZodArray<T> {
     return this.min(1, message) as any;
   }
 
@@ -1357,8 +1346,6 @@ export class ZodArray<
     });
   };
 }
-
-export type ZodNonEmptyArray<T extends ZodTypeAny> = ZodArray<T, "atleastone">;
 
 /////////////////////////////////////////
 /////////////////////////////////////////
@@ -3656,7 +3643,7 @@ export type ZodFirstPartySchemaTypes =
   | ZodUnknown
   | ZodNever
   | ZodVoid
-  | ZodArray<any, any>
+  | ZodArray<any>
   | ZodObject<any, any, any, any, any>
   | ZodUnion<any>
   | ZodDiscriminatedUnion<any, any, any>
